@@ -1,16 +1,7 @@
-CREATE TABLE public.user (
-    id serial PRIMARY KEY,
-    name VARCHAR(20) NOT NULL
-);
-
-CREATE TABLE public.building (
-    id serial PRIMARY KEY,
-    name VARCHAR(20) NOT NULL
-);
-
 CREATE TABLE public.activity (
     id serial PRIMARY KEY,
     name VARCHAR(20) NOT NULL,
-    user_id integer REFERENCES public.user,
-    building_id integer REFERENCES public.building
+    user VARCHAR(20) NOT NULL,
+    building VARCHAR(20) NOT NULL,
+    status VARCHAR(10) NOT NULL DEFAULT 'TODO'
 );
