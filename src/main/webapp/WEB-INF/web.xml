@@ -4,6 +4,14 @@
 <web-app>
     <display-name>Mentiq TODO Test</display-name>
     <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>com.mentiq.CorsFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter>
         <filter-name>Application</filter-name>
         <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
         <init-param>

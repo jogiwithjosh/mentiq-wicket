@@ -12,9 +12,9 @@ public class ActivityRepository {
     public List<Activity> all(String user, String building) throws RuntimeException {
         try (Session session = ConnectionFactory.getSessionFactory().openSession()) {
             Query<Activity> query =
-                    session.createQuery("SELECT a FROM Activity a WHERE a.username LIKE :user AND a.building LIKE :building", Activity.class);
-            query.setParameter("user", "%" + user + "%");
-            query.setParameter("building", "%" + building + "%");
+                    session.createQuery("SELECT a FROM Activity a WHERE LOWER(a.username) LIKE :user AND LOWER(a.building) LIKE :building", Activity.class);
+            query.setParameter("user", "%" + user + "%".toLowerCase());
+            query.setParameter("building", "%" + building + "%".toLowerCase());
             return query.list();
         }
     }
