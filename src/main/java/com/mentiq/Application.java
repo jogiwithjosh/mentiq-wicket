@@ -19,11 +19,6 @@ public class Application extends WebApplication {
     }
 
     @Override
-    public <T extends Page> MountedMapper mountPage(String path, Class<T> pageClass) {
-        return super.mountPage("/todo", Todo.class);
-    }
-
-    @Override
     public void init() {
         super.init();
         getResourceSettings().getResourceFinders().add(new WebApplicationPath(getServletContext(), "/"));
