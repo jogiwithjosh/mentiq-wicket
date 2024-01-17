@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Todo List</title>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Todo List</h2>
+
+    <div class="form-row mb-3">
+        <div class="form-group col-md-6">
+            <label for="userFilter">Filter by User:</label>
+            <input type="text" class="form-control" id="userFilter" placeholder="Enter User...">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="buildingFilter">Filter by Building:</label>
+            <input type="text" class="form-control" id="buildingFilter" placeholder="Enter Building...">
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <button class="btn btn-primary" id="addRowBtn">Add New Row</button>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Status</th>
+            <th scope="col">Username</th>
+            <th scope="col">Building</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody id="tableBody">
+        <!-- Table rows will be dynamically populated here -->
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>-->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    function filterTable(user, building) {
+        $.ajax({
+            url: "/activity/all",
+            type: "GET",
+            data: {
+                user: user,
+                building: building
+            },
+            dataType: "json", // Expect JSON response
+            success: function (data) {
+                populateTable(data);
+            },
+            error: function (error) {
+                console.error("Error fetching data:", error);
+            }
+        });
+    }
+
+    function populateTable(data) {
+        var tableBody = $("#tableBody");
+        tableBody.empty();
+
+        $.each(data, function (index, item) {
+            var row = "<tr>" +
+                "<td>" + item.id + "</td>" +
+                "<td contenteditable='true' data-id='" + item.id + "' data-field='name'>" + item.name + "</td>" +
+                "<td class='status-editable' data-id='" + item.id + "' data-field='status'>" + item.status + "</td>" +
+                "<td contenteditable='true' data-id='" + item.id + "' data-field='username'>" + item.username + "</td>" +
+                "<td contenteditable='true' data-id='" + item.id + "' data-field='building'>" + item.building + "</td>" +
+                "<td>" +
+                "<button class='btn btn-success btn-sm save-btn' data-id='" + item.id + "'>Save</button>" +
+                "</td>" +
+                "</tr>";
+
+            tableBody.append(row);
+        });
+
+        // Enable inline editing for status
+        enableStatusEditing();
+
+        // Handle save button click
+        $(".save-btn").click(function () {
+            var id = $(this).data("id");
+            saveRecord(id);
+        });
+    }
+
+    function enableStatusEditing() {
+        $(".status-editable").click(function () {
+            var statusCell = $(this);
+            var currentValue = statusCell.text();
+
+            // Create a dropdown with the available status options
+            var dropdown = "<select class='form-control' id='statusDropdown'>" +
+                "<option value='TODO'>TODO</option>" +
+                "<option value='INPROGRESS'>INPROGRESS</option>" +
+                "<option value='DONE'>DONE</option>" +
+                "</select>";
+
+            // Replace the text with the dropdown
+            statusCell.html(dropdown);
+
+            // Set the dropdown value to the current status
+            $("#statusDropdown").val(currentValue);
+
+            // Focus on the dropdown
+            $("#statusDropdown").focus();
+
+            // Handle dropdown change event
+            $("#statusDropdown").change(function () {
+                var selectedValue = $(this).val();
+                statusCell.text(selectedValue);
+
+                // Trigger the update status function
+                updateStatus(statusCell.data("id"), selectedValue);
+            });
+
+            // Handle dropdown blur event
+            $("#statusDropdown").blur(function () {
+                statusCell.html($(this).val());
+            });
+        });
+    }
+
+    function saveRecord(id) {
+        var name = $("td[data-id='" + id + "'][data-field='name']").text();
+        var status = $("td[data-id='" + id + "'][data-field='status']").text();
+        var username = $("td[data-id='" + id + "'][data-field='username']").text();
+        var building = $("td[data-id='" + id + "'][data-field='building']").text();
+
+        $.ajax({
+            url: "/activity/save",
+            type: "POST",
+            contentType: "application/json; charset=utf-8", // Set content type to JSON
+            data: JSON.stringify({
+                id: id,
+                name: name,
+                status: status,
+                username: username,
+                building: building
+            }),
+            dataType: "json", // Expect JSON response
+            success: function (response) {
+                console.log("Record saved:", response);
+                filterTable($("#userFilter").val(), $("#buildingFilter").val()); // Refresh the table after saving
+            },
+            error: function (error) {
+                console.error("Error saving record:", error);
+            }
+        });
+    }
+
+    function updateStatus(id, newStatus) {
+        $.ajax({
+            url: "/activity/update-status",
+            type: "PUT",
+            contentType: "application/json; charset=utf-8", // Set content type to JSON
+            data: JSON.stringify({
+                id: id,
+                status: newStatus
+            }),
+            dataType: "json", // Expect JSON response
+            success: function (response) {
+                console.log("Status updated:", response);
+            },
+            error: function (error) {
+                console.error("Error updating status:", error);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+    filterTable("", "");
+        $("#userFilter, #buildingFilter").on("input", function () {
+            var userValue = $("#userFilter").val().toLowerCase();
+            var buildingValue = $("#buildingFilter").val().toLowerCase();
+
+            filterTable(userValue, buildingValue);
+        });
+
+        $("#addRowBtn").click(function () {
+            // Dummy data for a new row
+            var newRowData = {
+                id: null,
+                name: "New Task",
+                status: "TODO",
+                username: "New User",
+                building: "New Building"
+            };
+
+            // Append the new row to the table
+            var newRow = "<tr>" +
+                "<td contenteditable='true' data-id='" + newRowData.id + "' data-field='id'></td>" +
+                "<td contenteditable='true' data-id='" + newRowData.id + "' data-field='name'>" + newRowData.name + "</td>" +
+                "<td class='status-editable' data-id='" + newRowData.id + "' data-field='status'>" + newRowData.status + "</td>" +
+                "<td contenteditable='true' data-id='" + newRowData.id + "' data-field='username'>" + newRowData.username + "</td>" +
+                "<td contenteditable='true' data-id='" + newRowData.id + "' data-field='building'>" + newRowData.building + "</td>" +
+                "<td>" +
+                "<button class='btn btn-success btn-sm save-btn' data-id='" + newRowData.id + "'>Save</button>" +
+                "</td>" +
+                "</tr>";
+
+            $("#tableBody").append(newRow);
+
+            // Enable inline editing for the new row
+            enableStatusEditing();
+
+            // Handle save button click for the new row
+            $(".save-btn[data-id='" + newRowData.id + "']").click(function () {
+                saveRecord(newRowData.id);
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

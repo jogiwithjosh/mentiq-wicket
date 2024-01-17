@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Todo List - User Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1, h2, h3 {
+            color: #007bff;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+<h1 wicket:id="index">
+</h1>
+<div class="container">
+    <h1 class="mt-4 mb-4">
+        Todo List - User Guide
+    </h1>
+    <h2>
+        <wicket:link>
+            <a href="com/mentiq/Todo.html">Click Here</a> to see projects status
+            <br/>
+        </wicket:link>
+    </h2>
+
+    <h2>Filtering</h2>
+    <p>
+        You can filter the todo list by user and building using the input fields provided.
+        Enter the user or building name in the respective fields, and the table will be updated accordingly.
+    </p>
+
+    <h2>Adding a New Row</h2>
+    <p>
+        To add a new row to the todo list, click the "Add New Row" button. A new row with default values will be added
+        to the table.
+    </p>
+
+    <h2>Inline Editing</h2>
+    <p>
+        You can edit the values in each cell by clicking on them. The "Name," "Username," and "Building" fields are
+        editable.
+        For the "Status" field, a dropdown will appear when clicked, allowing you to select a new status.
+        The "Save" button will appear only if any value in the row has been changed.
+    </p>
+
+    <h3>Available Status Options</h3>
+    <div class="code">
+        TODO<br>
+        INPROGRESS<br>
+        DONE<br>
+    </div>
+
+    <h2>Saving Changes</h2>
+    <p>
+        After editing a row, click the "Save" button to save the changes. For new rows, the "Save" button will also
+        appear
+        after clicking "Add New Row," allowing you to save the new record.
+    </p>
+
+    <h2>Updating Status</h2>
+    <p>
+        When you select a new status for a row, the status is updated automatically
+    </p>
+
+</div>
+
+</body>
+</html>
