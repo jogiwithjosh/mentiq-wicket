@@ -20,8 +20,8 @@ public class ConnectionFactory {
 
                 configuration.setProperty("connection.driver_class","org.postgresql.Driver");
                 configuration.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:5432/tests");
-                configuration.setProperty("hibernate.connection.username", "postgres");
-                configuration.setProperty("hibernate.connection.password", "postgres");
+                configuration.setProperty("hibernate.connection.username", "sylvain");
+                configuration.setProperty("hibernate.connection.password", "");
                 configuration.setProperty("dialect", "org.hibernate.dialect.PostgreSQLDialect");
                 configuration.setProperty("hibernate.hbm2ddl.auto", "update");
                 configuration.setProperty("show_sql", "true");
