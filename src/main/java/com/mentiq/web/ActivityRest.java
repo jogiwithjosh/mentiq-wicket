@@ -1,5 +1,6 @@
 package com.mentiq.web;
 
+import com.mentiq.dto.UpdateStatus;
 import com.mentiq.entity.Activity;
 import com.mentiq.repository.ActivityRepository;
 import com.mentiq.service.ActivityService;
@@ -34,7 +35,7 @@ public class ActivityRest extends AbstractRestResource<JsonWebSerialDeserial> {
     }
 
     @MethodMapping(value = "/update-status", httpMethod = HttpMethod.PUT)
-    public void updateStatus(@RequestParam(value = "id", required = true) int id, @RequestParam(value = "status", required = true) String status) {
-        this.activityService.updateStatus(id, status);
+    public void updateStatus(@RequestBody UpdateStatus updateStatus) {
+        this.activityService.updateStatus(updateStatus.getId(), updateStatus.getStatus());
     }
 }

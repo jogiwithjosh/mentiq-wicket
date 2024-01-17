@@ -31,8 +31,8 @@ public class ActivityRepository {
     public void updateStatus(int id, String status) throws RuntimeException {
         try (Session session = ConnectionFactory.getSessionFactory().openSession()) {
             Transaction tx = session.beginTransaction();
-            Query<Activity> query =
-                    session.createQuery("UPDATE Activity set status = :status WHERE id = :id", Activity.class);
+            Query query =
+                    session.createQuery("UPDATE Activity set status = :status WHERE id = :id");
             query.setParameter("id", id);
             query.setParameter("status", status);
             query.executeUpdate();
